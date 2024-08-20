@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsh Dhami Music</title>
+    <title>HarshDhami</title>
     <style>
         body {
             margin: 0;
@@ -139,141 +139,77 @@
     </div>
 
     <script>
-        const audio1 = document.getElementById('audio-1');
-        const playPauseButton1 = document.getElementById('play-pause-1');
-        const playIcon1 = document.getElementById('play-icon-1');
-        const pauseIcon1 = document.getElementById('pause-icon-1');
+        function setupAudioPlayer(audioId, playPauseButtonId, playIconId, pauseIconId, canvasId) {
+            const audio = document.getElementById(audioId);
+            const playPauseButton = document.getElementById(playPauseButtonId);
+            const playIcon = document.getElementById(playIconId);
+            const pauseIcon = document.getElementById(pauseIconId);
+            const canvas = document.getElementById(canvasId);
+            const canvasCtx = canvas.getContext('2d');
 
-        playPauseButton1.addEventListener('click', () => {
-            if (audio1.paused) {
-                audio1.play();
-                playIcon1.style.display = 'none';
-                pauseIcon1.style.display = 'block';
-            } else {
-                audio1.pause();
-                playIcon1.style.display = 'block';
-                pauseIcon1.style.display = 'none';
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioCtx.createAnalyser();
+            const source = audioCtx.createMediaElementSource(audio);
+
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const dpi = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpi;
+            canvas.height = canvas.clientHeight * dpi;
+            canvasCtx.scale(dpi, dpi);
+
+            playPauseButton.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                } else {
+                    audio.pause();
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            });
+
+            function draw() {
+                requestAnimationFrame(draw);
+
+                analyser.getByteFrequencyData(dataArray);
+
+                canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const gradient = canvasCtx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, 'rgba(255, 0, 150, 1)');
+                gradient.addColorStop(0.5, 'rgba(0, 255, 255, 1)');
+                gradient.addColorStop(1, 'rgba(0, 0, 255, 1)');
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i];
+
+                    canvasCtx.fillStyle = gradient;
+                    canvasCtx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+
+                    x += barWidth + 1;
+                }
             }
-        });
 
-        const canvas1 = document.getElementById('visualizer-1');
-        const canvasCtx1 = canvas1.getContext('2d');
-
-        const audioCtx1 = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser1 = audioCtx1.createAnalyser();
-        const source1 = audioCtx1.createMediaElementSource(audio1);
-
-        source1.connect(analyser1);
-        analyser1.connect(audioCtx1.destination);
-
-        analyser1.fftSize = 256;
-        const bufferLength1 = analyser1.frequencyBinCount;
-        const dataArray1 = new Uint8Array(bufferLength1);
-
-        const dpi1 = window.devicePixelRatio || 1;
-        canvas1.width = canvas1.clientWidth * dpi1;
-        canvas1.height = canvas1.clientHeight * dpi1;
-        canvasCtx1.scale(dpi1, dpi1);
-
-        function draw1() {
-            requestAnimationFrame(draw1);
-
-            analyser1.getByteFrequencyData(dataArray1);
-
-            canvasCtx1.clearRect(0, 0, canvas1.width, canvas1.height);
-
-            const gradient1 = canvasCtx1.createLinearGradient(0, 0, canvas1.width, canvas1.height);
-            gradient1.addColorStop(0, 'rgba(255, 0, 150, 1)');
-            gradient1.addColorStop(0.5, 'rgba(0, 255, 255, 1)');
-            gradient1.addColorStop(1, 'rgba(0, 0, 255, 1)');
-
-            const barWidth1 = (canvas1.width / bufferLength1) * 2.5;
-            let barHeight1;
-            let x1 = 0;
-
-            for (let i = 0; i < bufferLength1; i++) {
-                barHeight1 = dataArray1[i];
-
-                canvasCtx1.fillStyle = gradient1;
-                canvasCtx1.fillRect(x1, canvas1.height - barHeight1 / 2, barWidth1, barHeight1 / 2);
-
-                x1 += barWidth1 + 1;
-            }
+            audio.addEventListener('play', () => {
+                audioCtx.resume().then(() => {
+                    draw();
+                });
+            });
         }
 
-        audio1.addEventListener('play', () => {
-            audioCtx1.resume().then(() => {
-                draw1();
-            });
-        });
-
-        const audio2 = document.getElementById('audio-2');
-        const playPauseButton2 = document.getElementById('play-pause-2');
-        const playIcon2 = document.getElementById('play-icon-2');
-        const pauseIcon2 = document.getElementById('pause-icon-2');
-
-        playPauseButton2.addEventListener('click', () => {
-            if (audio2.paused) {
-                audio2.play();
-                playIcon2.style.display = 'none';
-                pauseIcon2.style.display = 'block';
-            } else {
-                audio2.pause();
-                playIcon2.style.display = 'block';
-                pauseIcon2.style.display = 'none';
-            }
-        });
-
-        const canvas2 = document.getElementById('visualizer-2');
-        const canvasCtx2 = canvas2.getContext('2d');
-
-        const audioCtx2 = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser2 = audioCtx2.createAnalyser();
-        const source2 = audioCtx2.createMediaElementSource(audio2);
-
-        source2.connect(analyser2);
-        analyser2.connect(audioCtx2.destination);
-
-        analyser2.fftSize = 256;
-        const bufferLength2 = analyser2.frequencyBinCount;
-        const dataArray2 = new Uint8Array(bufferLength2);
-
-        const dpi2 = window.devicePixelRatio || 1;
-        canvas2.width = canvas2.clientWidth * dpi2;
-        canvas2.height = canvas2.clientHeight * dpi2;
-        canvasCtx2.scale(dpi2, dpi2);
-
-        function draw2() {
-            requestAnimationFrame(draw2);
-
-            analyser2.getByteFrequencyData(dataArray2);
-
-            canvasCtx2.clearRect(0, 0, canvas2.width, canvas2.height);
-
-            const gradient2 = canvasCtx2.createLinearGradient(0, 0, canvas2.width, canvas2.height);
-            gradient2.addColorStop(0, 'rgba(255, 0, 150, 1)');
-            gradient2.addColorStop(0.5, 'rgba(0, 255, 255, 1)');
-            gradient2.addColorStop(1, 'rgba(0, 0, 255, 1)');
-
-            const barWidth2 = (canvas2.width / bufferLength2) * 2.5;
-            let barHeight2;
-            let x2 = 0;
-
-            for (let i = 0; i < bufferLength2; i++) {
-                barHeight2 = dataArray2[i];
-
-                canvasCtx2.fillStyle = gradient2;
-                canvasCtx2.fillRect(x2, canvas2.height - barHeight2 / 2, barWidth2, barHeight2 / 2);
-
-                x2 += barWidth2 + 1;
-            }
-        }
-
-        audio2.addEventListener('play', () => {
-            audioCtx2.resume().then(() => {
-                draw2();
-            });
-        });
+        setupAudioPlayer('audio-1', 'play-pause-1', 'play-icon-1', 'pause-icon-1', 'visualizer-1');
+        setupAudioPlayer('audio-2', 'play-pause-2', 'play-icon-2', 'pause-icon-2', 'visualizer-2');
     </script>
 </body>
 </html>
