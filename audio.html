@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player</title>
+    <style>
+        .audio-player {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-player">
+        <button id="play-pause-1">
+            <svg id="play-icon-1" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+            <svg id="pause-icon-1" viewBox="0 0 24 24" style="display: none;">
+                <path d="M6 19h4V5H6zm8-14v14h4V5z"></path>
+            </svg>
+        </button>
+        <audio id="audio-1">
+            <source src="https://drive.google.com/uc?export=download&id=1FyBy0KROiYVkGqUC3kUITTHXUxMSi1GX" type="audio/wav">
+        </audio>
+    </div>
+
+    <canvas id="visualizer-1"></canvas>
+
+    <div class="audio-player">
+        <button id="play-pause-2">
+            <svg id="play-icon-2" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+            <svg id="pause-icon-2" viewBox="0 0 24 24" style="display: none;">
+                <path d="M6 19h4V5H6zm8-14v14h4V5z"></path>
+            </svg>
+        </button>
+        <audio id="audio-2">
+            <source src="/Visualizer/prodby.harsh2.mp3" type="audio/mp3">
+        </audio>
+    </div>
+
+    <canvas id="visualizer-2"></canvas>
+
+    <script>
+        document.getElementById('play-pause-1').addEventListener('click', function() {
+            var audio = document.getElementById('audio-1');
+            var playIcon = document.getElementById('play-icon-1');
+            var pauseIcon = document.getElementById('pause-icon-1');
+            
+            if (audio.paused) {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'inline';
+            } else {
+                audio.pause();
+                playIcon.style.display = 'inline';
+                pauseIcon.style.display = 'none';
+            }
+        });
+
+        document.getElementById('play-pause-2').addEventListener('click', function() {
+            var audio = document.getElementById('audio-2');
+            var playIcon = document.getElementById('play-icon-2');
+            var pauseIcon = document.getElementById('pause-icon-2');
+            
+            if (audio.paused) {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'inline';
+            } else {
+                audio.pause();
+                playIcon.style.display = 'inline';
+                pauseIcon.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
